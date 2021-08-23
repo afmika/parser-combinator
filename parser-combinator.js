@@ -1,7 +1,7 @@
 /**
  * Rules :
  * * We are not allowed to change/mutate datas : we can only create an output given an input
- * * We can't do stuff in a procedural way (while/for loops)
+ * * We can't do stuff in a procedural way (no while/for loops)
  * * Curryfication is bae
  * 
  * The base concept is to construct a complex parser by combining elementary parts
@@ -60,7 +60,7 @@ const parseString = s => {
 const either = (parser1, parser2) => s => (parser1(s) || parser2(s));
 const anyOf = (... parsers) => parsers.reduce(either);
 
-// generates a parser that accepts a token of length n
+// generates a parser that accepts a token of length n for a given elementary parser
 // example : parseNum accepts '4', '2', '7', ...etc but we want to match '427' as a whole
 const many = (parser, label) => s => {
     const consumeNext = ((s, accum, started) => {

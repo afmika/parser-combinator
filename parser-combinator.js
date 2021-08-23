@@ -33,6 +33,19 @@ const parseSpace = s => {
     return null;
 }
 
+// a string is something that begins with a " and ends with a "
+const parseString = s => {
+    if (s[0] !== '"') return null;
+    const consumeNext = ((s, accum, started) => {
+        let res = s[0];
+        if (res === '"' || res == undefined)
+            return started ? null : {result : accum, type : 'STRING', remainder : s.slice(1)};
+        return consumeNext (s.slice(1), accum + res[0], false);
+    });
+    return consumeNext (s.slice(1), '', true);
+}
+
+
 // combinators
 // generates an 'universal' parser that accepts any token from any of the input parsers
 const either = (parser1, parser2) => s => (parser1(s) || parser2(s));
@@ -72,10 +85,11 @@ parseUsing (badassParser, '123+65* 10778 +687 woo 15');
 
 console.log('--------');
 
-// note : in our case many(p : Parser) only accepts a parser that proceeds a single token at time
+// note : in our case many(p : Parser) only accepts a parser that proceeds a single token at a time
 const trulyBadassParser = anyOf (
     many(parseNum, 'INTEGER'),
     many(parseSpace, 'SPACES'),
+    parseString,
     parseOp
 );
-parseUsing (trulyBadassParser, '123+65  * 10778 +687');
+parseUsing (trulyBadassParser, '8018 *28/6 "a string" + "another"');

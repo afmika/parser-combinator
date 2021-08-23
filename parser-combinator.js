@@ -2,7 +2,7 @@
  * Rules :
  * * We are not allowed to change/mutate datas : we can only create an output given an input
  * * We can't do stuff in a procedural way (while/for loops)
- * * Currification is bae
+ * * Curryfication is bae
  * 
  * The base concept is to construct a complex parser by combining elementary parts
  */
@@ -10,6 +10,15 @@
 const parseNum = s => {
     if ('0123456789'.includes(s[0]))
         return {result : s[0], type : 'NUM', remainder : s.slice(1)};
+    return null;
+}
+
+const parseLetter = s => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const symbols = '_?';
+    const it = letters + letters.toLowerCase() + symbols;
+    if (it.includes(s[0]))
+        return {result : s[0], type : 'LETTER', remainder : s.slice(1)};
     return null;
 }
 
@@ -89,7 +98,8 @@ console.log('--------');
 const trulyBadassParser = anyOf (
     many(parseNum, 'INTEGER'),
     many(parseSpace, 'SPACES'),
+    many(parseLetter, 'WORDS'),
     parseString,
     parseOp
 );
-parseUsing (trulyBadassParser, '8018 *28/6 "a string" + "another"');
+parseUsing (trulyBadassParser, '8018 *28/6 "a string" + "another" and_a_word');

@@ -47,14 +47,14 @@ const many = (parser, label) => s => {
             return started ? null : {result : accum, type : label || 'MANY', remainder : s};
         return consumeNext (s.slice(1), accum + res.result, false);
     });
-    // we can't initalize variables because this means we need to mutate them somehow
+    // we can't initalize variables because we do not want to mutate them
     // so let's go with that, brillant right ?
     return consumeNext (s, '', true);
 };
 
 
 // the only non pure part in this project are console.logs
-// at some point we need to output stuff on the screen
+// at some point we need a way to output stuff on the screen (the outside world)
 function parseUsing (parser, s) {
     const consume = s => {
         const res = parser (s);
@@ -72,7 +72,7 @@ parseUsing (badassParser, '123+65* 10778 +687 woo 15');
 
 console.log('--------');
 
-// note : in our case many only accepts a parser that proceeds a single token at time
+// note : in our case many(p : Parser) only accepts a parser that proceeds a single token at time
 const trulyBadassParser = anyOf (
     many(parseNum, 'INTEGER'),
     many(parseSpace, 'SPACES'),

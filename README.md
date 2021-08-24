@@ -5,3 +5,4 @@ Parser combinator from scratch using javascript
  - We are not allowed to change/mutate datas but we can determine an output given an input
  - We can't do stuff in a procedural way (no while / for loops)
  - Curryfication is bae
+ - No exception handling, just functions, if and else, constructors, recursion

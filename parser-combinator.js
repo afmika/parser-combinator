@@ -3,7 +3,7 @@
  * * We are not allowed to change/mutate datas : we can only create an output given an input
  * * We can't do stuff in a procedural way (no while/for loops)
  * * Curryfication is bae
- * 
+ * * No exception handling, just functions, if and else, constructors : a linear behavior
  * The base concept is to construct a complex parser by combining elementary parts
  */
 
@@ -46,7 +46,7 @@ const parseSpace = s => {
 const parseString = s => {
     if (s[0] !== '"') return null;
     const consumeNext = ((s, accum, started) => {
-        let res = s[0];
+        const res = s[0];
         if (res === '"' || res == undefined)
             return started ? null : {result : accum, type : 'STRING', remainder : s.slice(1)};
         return consumeNext (s.slice(1), accum + res[0], false);
@@ -64,7 +64,7 @@ const anyOf = (... parsers) => parsers.reduce(either);
 // example : parseNum accepts '4', '2', '7', ...etc but we want to match '427' as a whole
 const many = (parser, label) => s => {
     const consumeNext = ((s, accum, started) => {
-        let res = parser(s);
+        const res = parser(s);
         if (res == null)
             return started ? null : {result : accum, type : label || 'MANY', remainder : s};
         return consumeNext (s.slice(1), accum + res.result, false);

@@ -81,9 +81,9 @@ function parseUsing (parser, s) {
     const consume = s => {
         const res = parser (s);
         if (res == null) return;
-        // inpure part //
+        // impure part //
         console.log(res);
-        // inpure part //
+        // impure part //
         consume (res.remainder, s.input);
     };
     consume (s);
@@ -96,6 +96,7 @@ console.log('--------');
 
 // note : in our case many(p : Parser) only accepts a parser that proceeds a single token at a time
 const trulyBadassParser = anyOf (
+    many(parseNum, 'INTEGER'),
     many(parseNum, 'INTEGER'),
     many(parseSpace, 'SPACES'),
     many(parseLetter, 'WORDS'),

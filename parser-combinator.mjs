@@ -5,19 +5,24 @@
  * * No exception handling, just functions, if and else, constructor: a linear behavior
  */
 
-export const parseNum = (s) => {
+export const parseDigit = (s) => {
   if ("0123456789".includes(s[0])) {
-    return { result: s[0], type: "NUM", remainder: s.slice(1) };
+    return { result: s[0], type: "DIGIT", remainder: s.slice(1) };
   }
   return null;
 };
 
-export const parseLetter = (s) => {
+export const parseChar = (s) => {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const symbols = "_?";
-  const it = letters + letters.toLowerCase() + symbols;
-  if (it.includes(s[0])) {
-    return { result: s[0], type: "LETTER", remainder: s.slice(1) };
+  if (letters.includes(s[0].toUpperCase())) {
+    return { result: s[0], type: "CHAR", remainder: s.slice(1) };
+  }
+  return null;
+};
+
+export const parseCharValue = (value) => (s) => {
+  if (value == s[0]) {
+    return { result: s[0], type: "CHAR::" + value, remainder: s.slice(1) };
   }
   return null;
 };
@@ -69,7 +74,7 @@ export const anyOf = (...parsers) => parsers.reduce(either);
 
 /**
  * Generates a parser that accepts a token of length n for a given elementary parser
- * Example : parseNum accepts '4', '2', '7', ...etc but we want to match '427' as a whole
+ * Example : parseDigit accepts '4', '2', '7', ...etc but we want to match '427' as a whole
  */
 export const many = (parser, label) => (s) => {
   const consumeNext = (s, accum, started) => {
@@ -83,4 +88,19 @@ export const many = (parser, label) => (s) => {
   };
   // We are not allowed to initalize variables, we do not want to mutate them!
   return consumeNext(s, "", true);
+};
+
+/** Emulate bind operator */
+export const then = (...parsers) => (s) => {
+  const chain = parsers.reduce((acc, parser) => {
+    if (acc == null) return null;
+    const seqn = parser(acc.remainder);
+    return seqn == null
+      ? null
+      : { result: acc.result + seqn.result, remainder: seqn.remainder };
+  }, { result: "", remainder: s });
+
+  return chain == null
+    ? null
+    : { result: chain.result, type: "THEN", remainder: chain.remainder };
 };

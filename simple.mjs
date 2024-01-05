@@ -1,10 +1,10 @@
 import {
   anyOf,
-  parseLetter,
-  parseNum,
+  many,
+  parseDigit,
+  parseLiteral,
   parseOp,
   parseSpace,
-  parseString,
 } from "./parser-combinator.mjs";
 
 function evaluate(parser, s) {
@@ -17,5 +17,10 @@ function evaluate(parser, s) {
   consume(s);
 }
 
-const badassParser = anyOf(parseOp, parseNum, parseSpace);
+const badassParser = anyOf(
+  parseOp,
+  parseLiteral("woo"),
+  many(parseDigit, "NUM"),
+  parseSpace,
+);
 evaluate(badassParser, "123+65* 10778 +687 woo 15");
